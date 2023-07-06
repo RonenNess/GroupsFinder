@@ -1,0 +1,28 @@
+{
+  "name": "groups-finder",
+  "version": "1.0.0",
+  "description": "Micro JS lib for finding groups in 2D grid and extracting sprites from textures atlas.",
+  "main": "src/groups_finder.js",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RonenNess/GroupsFinder.git"
+  },
+  "keywords": [
+    "groups",
+    "flood fill",
+    "texture atlas",
+    "sprites",
+    "graphics"
+  ],
+  "author": "Ronen Ness",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RonenNess/GroupsFinder/issues"
+  },
+  "homepage": "https://github.com/RonenNess/GroupsFinder/",
+  "dependencies": {
+  }
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Groups Finder Demo</title>
+    <meta name="description" content="Utility to find groups of values in 2D grids.">
+    <meta name="author" content="Ronen Ness">
+    <style>
+      * {
+        font-family: Tahoma;
+      }
+    </style>
+    <script src="src/groups_finder.js"></script>
+  </head>
+  <body>
+
+    <!-- load demo images -->
+    <img style="display: none;" id="demo-1" src="demo_assets/brute.png" />
+    <img style="display: none;" id="demo-2" src="demo_assets/skeleton.png" />
+    <img style="display: none;" id="demo-3" src="demo_assets/colors.png" />
+
+    <!-- select demo buttons -->
+    <h2></h2>
+    <h3>This demo illustrates the GroupsFinder library.</h3>
+    <h4>For more information, check out <a href="https://github.com/RonenNess/GroupsFinder">the repo</a>.</h4>
+    <span>Select sample image to break into groups</span><br />
+    <div style="margin-top: 6px;">
+      <button type="button" onclick="_selectDemo(0)">Brute Spritesheet</button>
+      <button type="button" onclick="_selectDemo(1)">Skeleton Spritesheet</button>
+      <button type="button" onclick="_selectDemo(2)">Color Groups</button>
+    </div>
+
+    <!-- show groups as json -->
+    <p>Results as JSON: </p>
+    <textarea id="results-json" style="width: 340px;
+    height: calc(100% - 220px);
+    position: fixed;
+    top: 200px;
+    resize: none;" readonly></textarea>
+
+    <!-- preview image -->
+    <div style="left:400px; position:relative">
+      <h1 id="loading-msg">Processing Image..</h1>
+      <img id="preview-pic" style="display:block;" />
+      <canvas id="groups-render" style="position:fixed; display:block;"></canvas>
+    </div>
+
+    <!-- init demo -->
+    <script>
+
+      // adjust canvas position and size
+      setInterval(() => {
+          const preview = document.getElementById('preview-pic');
+          const canvas = document.getElementById('groups-render');
+          let imgRect = preview.getBoundingClientRect();
+          canvas.style.left = imgRect.left + 'px';
+          canvas.style.top = imgRect.top + 'px';
+      }, 10);
+
+      // create demos data
+      const demos = [
+        [document.getElementById('demo-1'), 'unpackTextureAtlas'],
+        [document.getElementById('demo-2'), 'unpackTextureAtlas'],
+        [document.getElementById('demo-3'), 'findColorGroups'],
+      ];
+
+      // select demo image
+      function _selectDemo(index)
+      {
+        // show loading message
+        document.getElementById('loading-msg').style.display = 'block';
+        document.getElementById('results-json').value = "";
+
+        // get preview image, source image, and canvas to draw groups on
+        const demo = demos[index];
+        const preview = document.getElementById('preview-pic');
+        const sourceImg = demo[0];
+        const method = demo[1];
+        const canvas = document.getElementById('groups-render');
+        preview.src = sourceImg.src;
+        
+        // reset previous result
+        canvas.width = 0;
+
+        // once loaded, find groups and draw rectangles
+        preview.onload = () => {
+
+          // set canvas size
+          canvas.width = sourceImg.width;
+          canvas.height = sourceImg.height;
+
+          // get groups
+          const groupsFinder = new GroupsFinder.GroupsFinder();
+          groupsFinder.storePositions = false;
+          const groups = groupsFinder[method](sourceImg);
+
+          // update results text
+          document.getElementById('results-json').value = JSON.stringify(groups, null, 2);
+
+          // draw the groups
+          var ctx = canvas.getContext('2d');
+          ctx.strokeStyle = "red";
+          for (let group of groups) {
+            const rect = group.boundingRectangle;
+            ctx.rect( rect.x, rect.y, rect.width, rect.height);
+            ctx.stroke();
+          }
+          
+          // hide loading message
+          document.getElementById('loading-msg').style.display = 'none';
+        }
+      }
+
+      // init demo
+      function _initDemo() {
+        _selectDemo(0);
+      }
+
+      // wait for images to load
+      function _waitForImages() {
+        if (!document.getElementById('demo-1').width || !document.getElementById('demo-2').width || !document.getElementById('demo-3').width) {
+          return setTimeout(_waitForImages, 10);
+        }
+        _initDemo();
+      }
+      _waitForImages();
+    </script>
+
+  </body>
+</html>
