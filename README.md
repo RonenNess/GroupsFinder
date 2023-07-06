@@ -5,6 +5,8 @@ For example you can use this to find sprites boundaries in a texture atlas (by f
 
 This module is geared toward textures and locating groups of pixels in them, but built with a generic design that allows it to operate on any 2D grid of values.
 
+An online demo can be found [here](https://ronenness.github.io/GroupsFinder/).
+
 ## How it works
 
 The groups finder uses a flood-fill algorithm to iterate and arrange values (or pixels) into groups. Each group may contain the value indices themselves (its configurable, since it requires a lot of memory to store) and the axis-aligned rectangle containing the group.
